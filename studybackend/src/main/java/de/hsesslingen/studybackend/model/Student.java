@@ -5,6 +5,8 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import de.hsesslingen.studybackend.model.task.Task;
 
 @Entity
@@ -22,6 +24,7 @@ public class Student {
     @Column(name = "email")
     private String email;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY) // One student can have many tasks
     private List<Task> tasks = new ArrayList<>();
 }

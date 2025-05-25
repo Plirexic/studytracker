@@ -5,6 +5,8 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import de.hsesslingen.studybackend.model.Student;
 
 import java.time.LocalDateTime;
@@ -39,6 +41,7 @@ public class Task {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY) // Many tasks can belong to one student
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
