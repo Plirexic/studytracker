@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h2>Student Login</h2>
+    <h2>Studytracker LOGIN</h2>
     <form @submit.prevent="handleLogin" class="login-form">
       <div class="form-group">
         <label for="name">Name:</label>

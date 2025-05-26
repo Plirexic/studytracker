@@ -1,7 +1,10 @@
 package de.hsesslingen.studybackend.model.task;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,12 +24,14 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Title cannot be null")
     @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @NotNull(message = "Due date cannot be null")
     @Column(name = "due_date")
     private LocalDate dueDate;
 

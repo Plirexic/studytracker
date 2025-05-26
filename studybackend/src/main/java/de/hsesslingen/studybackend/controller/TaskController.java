@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 
 import de.hsesslingen.studybackend.repository.StudentRepository;
 import de.hsesslingen.studybackend.repository.TaskRepository;
+import jakarta.validation.Valid;
 import de.hsesslingen.studybackend.model.task.Task;
 import de.hsesslingen.studybackend.model.task.TaskAction;
 import de.hsesslingen.studybackend.model.Student;
@@ -35,11 +36,12 @@ public class TaskController {
 
     // POST: Create a new task for a student
     @PostMapping("/students/{studentId}/tasks")
-    public ResponseEntity<Task> createTask(@PathVariable Long studentId, @RequestBody Task taskRequest) {
+    public ResponseEntity<Task> createTask(@PathVariable Long studentId, @Valid @RequestBody Task taskRequest) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found with id " + studentId));
         
         taskRequest.setStudent(student);
+        
         Task createdTask = taskRepository.save(taskRequest);
 
         // Log task creation using the stored procedure
@@ -132,11 +134,15 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found with id " + taskId));
+
+        try {
+            // Log task deletion using the stored procedure
+            taskRepository.logTaskAction(task.getId(), task.getStudent().getId(), TaskAction.DELETED.name(), "Task deleted");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to log task deletion: " + task.getId(), e);
+        }
         
         taskRepository.delete(task);
-
-        // Log task deletion using the stored procedure
-        taskRepository.logTaskAction(task.getId(), task.getStudent().getId(), TaskAction.DELETED.name(), "Task deleted");
 
         return ResponseEntity.noContent().build();
     }
