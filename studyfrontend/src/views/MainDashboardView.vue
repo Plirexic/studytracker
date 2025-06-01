@@ -496,10 +496,36 @@ watch(studentId, (newId, oldId) => {
   flex-grow: 1;
   margin-right: 15px;
   word-break: break-word;
+  overflow-wrap: break-word; 
+  word-wrap: break-word; 
+  min-width: 0; 
+  hyphens: auto; 
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
 }
-.task-info h3 { margin: 0 0 6px 0; color: #212529; font-size: 1.1em; }
-.task-info p { margin: 0 0 4px 0; font-size: 0.9em; color: #495057; }
-.task-info p:last-child { margin-bottom: 0; }
+.task-info h3 {
+  margin: 0 0 6px 0; 
+  color: #212529; 
+  font-size: 1.1em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+.task-info p { 
+  margin: 0 0 4px 0; 
+  font-size: 0.9em; 
+  color: #495057; 
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+.task-info p:last-child { 
+  margin-bottom: 0; 
+}
 
 
 .task-edit-form {

@@ -35,6 +35,7 @@ body, html {
 #app-container {
   width: 50vw;
   min-height: 100vh;
+  justify-content: center;
 }
 
 button {
