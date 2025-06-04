@@ -14,6 +14,8 @@
       <input 
         type="date" 
         v-model="editData.dueDate" 
+        :min="todayDate"
+        @change="validateDueDate"
       />
       <label class="edit-completed-label">
         Completed:
@@ -26,7 +28,7 @@
         <button 
           @click="handleSave" 
           class="save-btn" 
-          :disabled="updateLoading"
+          :disabled="updateLoading || !!editDueDateError"
         >
           {{ updateLoading ? 'Saving...' : 'Save' }}
         </button>
@@ -76,6 +78,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
+import { getTodayDateString, isValidFutureDate } from '@/utils/dateUtils';
 
 const props = defineProps({
   task: {
@@ -96,6 +99,7 @@ const emit = defineEmits(['update-task', 'delete-task', 'toggle-complete']);
 
 const isEditing = ref(false);
 const editError = ref(null);
+const editDueDateError = ref(null);
 const editData = reactive({
   id: null,
   title: '',
@@ -103,6 +107,8 @@ const editData = reactive({
   dueDate: null,
   completed: false
 });
+
+const todayDate = ref(getTodayDateString());
 
 const handleStartEdit = () => {
   isEditing.value = true;
@@ -116,11 +122,24 @@ const handleStartEdit = () => {
     }
   }
   editError.value = null;
+  editDueDateError.value = null;
 };
 
 const handleCancelEdit = () => {
   isEditing.value = false;
   editError.value = null;
+  editDueDateError.value = null;
+};
+
+const validateEditDueDate = () => {
+  if (editData.dueDate && !isValidFutureDate(editData.dueDate)) {
+    editDueDateError.value = 'Due date cannot be in the past.';
+  } else if (!editData.dueDate) {
+    editDueDateError.value = 'Due date is required.';
+  }
+  else {
+    editDueDateError.value = null;
+  }
 };
 
 const handleSave = () => {
@@ -130,6 +149,10 @@ const handleSave = () => {
   }
   if (!editData.dueDate) {
     editError.value = "Due date is required.";
+    return;
+  }
+  validateEditDueDate();
+  if (editDueDateError.value) {
     return;
   }
   

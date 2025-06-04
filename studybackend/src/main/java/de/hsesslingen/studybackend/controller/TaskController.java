@@ -45,7 +45,7 @@ public class TaskController {
         Task createdTask = taskRepository.save(taskRequest);
 
         // Log task creation using the stored procedure
-        taskRepository.logTaskAction(createdTask.getId(), studentId, TaskAction.CREATED.name(), "Task created" + createdTask.getTitle());
+        taskRepository.logTaskAction(createdTask.getId(), studentId, TaskAction.CREATED.name(), "Task created: " + createdTask.getTitle());
 
         return new ResponseEntity<>(createdTask, HttpStatus.CREATED);
     }

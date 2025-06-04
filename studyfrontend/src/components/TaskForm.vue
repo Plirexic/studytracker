@@ -13,11 +13,14 @@
       ></textarea>
       <input 
         type="date" 
-        v-model="taskData.dueDate" 
+        v-model="taskData.dueDate"
+        :min="todayDate"
+        @change="validateDueDate" 
       />
+      <p v-if="dueDateError" class="error-message">{{ dueDateError }}</p>
       <button 
         @click="handleSubmit" 
-        :disabled="loading"
+        :disabled="loading || !!dueDateError"
       >
         {{ loading ? 'Creating...' : 'Add Task' }}
       </button>
@@ -27,7 +30,8 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
+import { getTodayDateString, isValidFutureDate } from '@/utils/dateUtils';
 
 const emit = defineEmits(['create-task']);
 
@@ -49,11 +53,31 @@ const taskData = reactive({
   completed: false
 });
 
+const todayDate = ref(getTodayDateString());
+const dueDateError = ref(null);
+
+const validateDueDate = () => {
+  if (taskData.dueDate && !isValidFutureDate(taskData.dueDate)) {
+    dueDateError.value = 'Due date cannot be in the past.';
+  } else if (!taskData.dueDate) { // Check if it was cleared
+    dueDateError.value = 'Due date is required.';
+  }
+  else {
+    dueDateError.value = null;
+  }
+};
+
 const handleSubmit = () => {
   if (!taskData.title.trim()) {
+    alert('Task title is required.');
     return;
   }
   if (!taskData.dueDate) {
+    dueDateError.value = 'Due date is required.';
+    return;
+  }
+  validateDueDate();
+  if (dueDateError.value) {
     return;
   }
   
